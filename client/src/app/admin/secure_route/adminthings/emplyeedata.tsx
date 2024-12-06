@@ -42,6 +42,7 @@ export function EmployeeTable() {
   const [password, setPassword] = useState<string>('')
   const [isAuthorized, setIsAuthorized] = useState<boolean>(true)
   const [employees, setEmployees] = useState<Employee[]>(initialEmployees)
+  const [editingIndex, setEditingIndex] = useState<number | null>(null)
 
   const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value)
@@ -56,12 +57,19 @@ export function EmployeeTable() {
     }
   }
 
-  const handleAccessStatusChange = (email: string, newStatus: 'Granted' | 'Denied') => {
-    setEmployees((prevEmployees) => prevEmployees.map((employee) => (employee.email === email ? { ...employee, accessStatus: newStatus } : employee)))
+  const handleEditChange = (index: number, key: keyof Employee, value: string | 'Granted' | 'Denied') => {
+    const updatedEmployees = [...employees]
+    updatedEmployees[index] = { ...updatedEmployees[index], [key]: value }
+    setEmployees(updatedEmployees)
+  }
+
+  const handleDelete = (index: number) => {
+    setEmployees((prevEmployees) => prevEmployees.filter((_, i) => i !== index))
   }
 
   const handleSaveChanges = () => {
     console.log('Changes saved:', employees)
+    setEditingIndex(null) // Exit editing mode
   }
 
   return (
@@ -88,33 +96,69 @@ export function EmployeeTable() {
                 <TableHead>Role</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {employees.map((employee) => (
+              {employees.map((employee, index) => (
                 <TableRow key={employee.email}>
-                  <TableCell className="font-medium">{employee.name}</TableCell>
-                  <TableCell>{employee.role}</TableCell>
-                  <TableCell>{employee.email}</TableCell>
                   <TableCell>
-                    <label className="inline-flex items-center">
-                      {/* Use ShadCN Switch here */}
-                      <Switch checked={employee.accessStatus === 'Granted'} onCheckedChange={(checked) => handleAccessStatusChange(employee.email, checked ? 'Granted' : 'Denied')} />
-                      <span className="ml-2">{employee.accessStatus}</span>
-                    </label>
+                    {editingIndex === index ? (
+                      <input type="text" value={employee.name} onChange={(e) => handleEditChange(index, 'name', e.target.value)} className="border p-1 w-full" />
+                    ) : (
+                      employee.name
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {editingIndex === index ? (
+                      <input type="text" value={employee.role} onChange={(e) => handleEditChange(index, 'role', e.target.value)} className="border p-1 w-full" />
+                    ) : (
+                      employee.role
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {editingIndex === index ? (
+                      <input type="email" value={employee.email} onChange={(e) => handleEditChange(index, 'email', e.target.value)} className="border p-1 w-full" />
+                    ) : (
+                      employee.email
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {editingIndex === index ? (
+                      <label className="inline-flex items-center">
+                        <Switch checked={employee.accessStatus === 'Granted'} onCheckedChange={(checked) => handleEditChange(index, 'accessStatus', checked ? 'Granted' : 'Denied')} />
+                        <span className="ml-2">{employee.accessStatus}</span>
+                      </label>
+                    ) : (
+                      employee.accessStatus
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {editingIndex === index ? (
+                      <Button onClick={handleSaveChanges}>Save</Button>
+                    ) : (
+                      <>
+                        <Button variant="secondary" onClick={() => setEditingIndex(index)}>
+                          Edit
+                        </Button>
+                        <Button variant="destructive" onClick={() => handleDelete(index)} className="ml-2">
+                          Delete
+                        </Button>
+                      </>
+                    )}
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
             <TableFooter>
               <TableRow>
-                <TableCell colSpan={3}>Total Employees</TableCell> {/* Adjusted to colspan 3 */}
+                <TableCell colSpan={4}>Total Employees</TableCell>
                 <TableCell>{employees.length}</TableCell>
               </TableRow>
             </TableFooter>
           </Table>
           <div className="mt-4">
-            <Button onClick={handleSaveChanges}>Save Changes</Button>
+            <Button onClick={handleSaveChanges}>Save All Changes</Button>
           </div>
         </div>
       )}
