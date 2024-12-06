@@ -3,6 +3,7 @@ import React, { useState, ChangeEvent, useEffect } from 'react'
 import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Switch } from '@/components/ui/switch'
 import { Button } from '@/components/ui/button'
+import { AddEmployeeDialog } from './addEmployee'
 
 interface Employee {
   _id: string
@@ -44,7 +45,6 @@ export function EmployeeTable() {
       })
 
       if (response.ok) {
-        // Remove the employee from the state after successful deletion
         setEmployees((prevEmployees) => prevEmployees.filter((employee) => employee._id !== id))
       } else {
         console.error('Failed to delete employee')
@@ -65,11 +65,10 @@ export function EmployeeTable() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(updatedEmployee), // Send the updated employee object
+        body: JSON.stringify(updatedEmployee),
       })
 
       if (response.ok) {
-        // Update successful, close the edit mode
         setEditingIndex(null)
         console.log('Employee updated successfully')
       } else {
@@ -77,6 +76,27 @@ export function EmployeeTable() {
       }
     } catch (error) {
       console.error('Error updating employee:', error)
+    }
+  }
+
+  const handleAddEmployee = async (newEmployee: Employee) => {
+    try {
+      const response = await fetch('http://localhost:5000/api/employees', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newEmployee),
+      })
+
+      if (response.ok) {
+        const createdEmployee = await response.json()
+        setEmployees((prevEmployees) => [...prevEmployees, createdEmployee])
+      } else {
+        console.error('Failed to add new employee')
+      }
+    } catch (error) {
+      console.error('Error adding new employee:', error)
     }
   }
 
@@ -113,6 +133,10 @@ export function EmployeeTable() {
         </form>
       ) : (
         <div>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-semibold">Employee List</h2>
+            <AddEmployeeDialog onAddEmployee={handleAddEmployee} />
+          </div>
           <Table>
             <TableCaption>A list of employees with access to the website.</TableCaption>
             <TableHeader>
@@ -182,9 +206,6 @@ export function EmployeeTable() {
               </TableRow>
             </TableFooter>
           </Table>
-          <div className="mt-4">
-            <Button onClick={handleSaveChanges}>Save All Changes</Button>
-          </div>
         </div>
       )}
     </div>
