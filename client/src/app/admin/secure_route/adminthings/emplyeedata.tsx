@@ -1,47 +1,21 @@
 'use client'
-import React, { useState, ChangeEvent } from 'react'
+import React, { useState, ChangeEvent, useEffect } from 'react'
 import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Switch } from '@/components/ui/switch'
 import { Button } from '@/components/ui/button'
 
 interface Employee {
+  _id: string
   name: string
   role: string
   email: string
   accessStatus: 'Granted' | 'Denied'
 }
 
-const initialEmployees: Employee[] = [
-  {
-    name: 'John Doe',
-    role: 'Admin',
-    email: 'john@example.com',
-    accessStatus: 'Granted',
-  },
-  {
-    name: 'Jane Smith',
-    role: 'Employee',
-    email: 'jane@example.com',
-    accessStatus: 'Granted',
-  },
-  {
-    name: 'Alice Brown',
-    role: 'Employee',
-    email: 'alice@example.com',
-    accessStatus: 'Denied',
-  },
-  {
-    name: 'Bob Johnson',
-    role: 'Manager',
-    email: 'bob@example.com',
-    accessStatus: 'Granted',
-  },
-]
-
 export function EmployeeTable() {
   const [password, setPassword] = useState<string>('')
   const [isAuthorized, setIsAuthorized] = useState<boolean>(true)
-  const [employees, setEmployees] = useState<Employee[]>(initialEmployees)
+  const [employees, setEmployees] = useState<Employee[]>([])
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
 
   const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -63,14 +37,65 @@ export function EmployeeTable() {
     setEmployees(updatedEmployees)
   }
 
-  const handleDelete = (index: number) => {
-    setEmployees((prevEmployees) => prevEmployees.filter((_, i) => i !== index))
+  const handleDelete = async (id: string) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/employees/${id}`, {
+        method: 'DELETE',
+      })
+
+      if (response.ok) {
+        // Remove the employee from the state after successful deletion
+        setEmployees((prevEmployees) => prevEmployees.filter((employee) => employee._id !== id))
+      } else {
+        console.error('Failed to delete employee')
+      }
+    } catch (error) {
+      console.error('Error deleting employee:', error)
+    }
   }
 
-  const handleSaveChanges = () => {
-    console.log('Changes saved:', employees)
-    setEditingIndex(null) // Exit editing mode
+  const handleSaveChanges = async () => {
+    if (editingIndex === null) return
+
+    const updatedEmployee = employees[editingIndex]
+
+    try {
+      const response = await fetch(`http://localhost:5000/api/employees/${updatedEmployee._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedEmployee), // Send the updated employee object
+      })
+
+      if (response.ok) {
+        // Update successful, close the edit mode
+        setEditingIndex(null)
+        console.log('Employee updated successfully')
+      } else {
+        console.error('Failed to update employee')
+      }
+    } catch (error) {
+      console.error('Error updating employee:', error)
+    }
   }
+
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/employees')
+        if (response.ok) {
+          const data = await response.json()
+          setEmployees(data)
+        } else {
+          console.error('Failed to fetch employees')
+        }
+      } catch (error) {
+        console.error('Error fetching employees:', error)
+      }
+    }
+    fetchEmployees()
+  }, [])
 
   return (
     <div>
@@ -135,13 +160,13 @@ export function EmployeeTable() {
                   </TableCell>
                   <TableCell>
                     {editingIndex === index ? (
-                      <Button onClick={handleSaveChanges}>Save</Button>
+                      <Button onClick={() => handleSaveChanges()}>Save</Button>
                     ) : (
                       <>
                         <Button variant="secondary" onClick={() => setEditingIndex(index)}>
                           Edit
                         </Button>
-                        <Button variant="destructive" onClick={() => handleDelete(index)} className="ml-2">
+                        <Button variant="destructive" onClick={() => handleDelete(employee._id)} className="ml-2">
                           Delete
                         </Button>
                       </>
