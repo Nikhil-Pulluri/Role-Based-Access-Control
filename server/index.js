@@ -88,6 +88,40 @@ app.post('/api/admin/login', async (req, res) => {
 
 
 
+// Employee login auth
+app.post('/api/employees/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
+    }
+
+    const employee = await Employee.findOne({ email }); // Ensure the employee role
+    if (!employee) {
+      return res.status(404).json({ error: 'Employee not found' });
+    }
+
+    // Check if access is granted
+    if (employee.accessStatus !== 'Granted') {
+      return res.status(403).json({ error: 'Access denied. Your account is not granted access.' });
+    }
+
+    // Compare passwords (use hashing for production)
+    if (employee.password !== password) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    res.status(200).json({ message: 'Login successful', employee });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+
+
+
 // Find an employee by email
 app.get('/api/employees/email/:email', async (req, res) => {
   try {
