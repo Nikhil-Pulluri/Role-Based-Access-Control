@@ -1,9 +1,13 @@
 'use client'
 import React, { useState } from 'react'
 import Login from '@/components/ui/login'
+import { useEmployeeAuth } from '@/context/employee_context'
+import { useRouter } from 'next/navigation'
 
 function Page() {
   const [error, setError] = useState<string | null>(null)
+  const { setEmail } = useEmployeeAuth()
+  const router = useRouter()
 
   const handleLogin = async (credentials: { email: string; password: string; userType: 'admin' | 'employee' }) => {
     if (credentials.userType !== 'employee') {
@@ -32,6 +36,9 @@ function Page() {
 
       // Store employee data (like token) if needed
       localStorage.setItem('employeeData', JSON.stringify(data))
+
+      setEmail(credentials.email)
+      router.push('employee/secure_route')
 
       // Redirect to the secure employee route (e.g., dashboard)
       // router.push('/employee/dashboard'); // If using Next.js router
