@@ -12,13 +12,13 @@ export default function Home() {
           <p className="text-muted-foreground">Please select your login type to continue</p>
         </div>
 
-        <div className="space-y-4 ">
+        <div className="space-y-4">
           <Link href="/admin">
             <Button className="w-full h-16 text-lg justify-start space-x-4 bg-white hover:bg-gray-50 text-gray-900 border shadow-sm" variant="outline">
               <Building2 className="h-6 w-6 text-primary" />
               <div className="flex flex-col items-start">
                 <span className="font-semibold">Admin Portal</span>
-                <span className="text-sm text-muted-foreground">System administration & Management</span>
+                <span className="text-sm text-muted-foreground">System administration and management</span>
               </div>
             </Button>
           </Link>
