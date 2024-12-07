@@ -87,6 +87,59 @@ app.post('/api/admin/login', async (req, res) => {
 });
 
 
+
+// Find an employee by email
+app.get('/api/employees/email/:email', async (req, res) => {
+  try {
+    const { email } = req.params;
+
+    const employee = await Employee.findOne({ email });
+
+    if (!employee) {
+      return res.status(404).json({ error: 'Employee not found' });
+    }
+
+    res.status(200).json(employee);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+
+// Change password
+app.put('/api/employees/:id/change-password', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ error: 'Current and new passwords are required' });
+    }
+
+    const employee = await Employee.findById(id);
+
+    if (!employee) {
+      return res.status(404).json({ error: 'Employee not found' });
+    }
+
+    // Check if the current password matches
+    if (employee.password !== currentPassword) {
+      return res.status(401).json({ error: 'Current password is incorrect' });
+    }
+
+    // Update password
+    employee.password = newPassword;
+    await employee.save();
+
+    res.status(200).json({ message: 'Password updated successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+
 // Update an employee
 app.put('/api/employees/:id', async (req, res) => {
   try {

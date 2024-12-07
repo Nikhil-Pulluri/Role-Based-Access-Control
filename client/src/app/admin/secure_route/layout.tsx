@@ -1,9 +1,11 @@
 'use client'
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useAdminAuth } from '@/context/admin_login' // Import your auth context
+import { ChangePasswordDialog } from './adminthings/changePassword'
+import { useEmailAuth } from '@/context/auth_context'
 
 interface LayoutProps {
   children: React.ReactNode
@@ -12,6 +14,9 @@ interface LayoutProps {
 const SidebarLayout: React.FC<LayoutProps> = ({ children }) => {
   const router = useRouter()
   const { isLoggedIn, setLoginStatus } = useAdminAuth() // Use auth context
+  const { email } = useEmailAuth() // Get email from the auth context
+  const [employeeDetails, setEmployeeDetails] = useState<any>(null) // State to store employee details
+  const [loading, setLoading] = useState<boolean>(true) // Loading state to manage the fetching process
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -19,6 +24,28 @@ const SidebarLayout: React.FC<LayoutProps> = ({ children }) => {
       router.push('/admin')
     }
   }, [isLoggedIn, router])
+
+  useEffect(() => {
+    // Fetch employee details by email when email is available
+    const fetchEmployeeDetails = async () => {
+      if (email) {
+        try {
+          const response = await fetch(`http://localhost:5000/api/employees/email/${email}`)
+          if (!response.ok) {
+            throw new Error('Failed to fetch employee details')
+          }
+          const data = await response.json()
+          setEmployeeDetails(data)
+        } catch (error) {
+          console.error('Error fetching employee details:', error)
+        } finally {
+          setLoading(false)
+        }
+      }
+    }
+
+    fetchEmployeeDetails()
+  }, [email])
 
   const handleLogout = () => {
     // Clear any authentication data (e.g., tokens in localStorage/sessionStorage)
@@ -32,8 +59,8 @@ const SidebarLayout: React.FC<LayoutProps> = ({ children }) => {
     router.push('/admin') // Replace with your login route
   }
 
-  // Prevent rendering layout while redirecting
-  if (!isLoggedIn) {
+  // Prevent rendering layout while redirecting or loading employee data
+  if (!isLoggedIn || loading) {
     return null
   }
 
@@ -46,6 +73,15 @@ const SidebarLayout: React.FC<LayoutProps> = ({ children }) => {
             <Link href="/" className="hover:text-blue-400">
               Employees
             </Link>
+            <div className="text-black">
+              {employeeDetails && (
+                <p>
+                  Welcome, {employeeDetails.name} ({employeeDetails.role})
+                </p>
+              )}
+              {/* Pass employeeId directly as a prop to ChangePasswordDialog */}
+              {employeeDetails && employeeDetails._id && <ChangePasswordDialog employeeId={employeeDetails._id} />}
+            </div>
             <button onClick={handleLogout} className="text-left bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md mt-6">
               Logout
             </button>

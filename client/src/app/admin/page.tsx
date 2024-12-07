@@ -4,11 +4,13 @@ import React from 'react'
 import { useRouter } from 'next/navigation'
 import Login from '@/components/ui/login'
 import { useAdminAuth } from '@/context/admin_login'
+import { useEmailAuth } from '@/context/auth_context'
 
 function Page() {
   const router = useRouter()
 
   const { setLoginStatus } = useAdminAuth()
+  const { setEmail } = useEmailAuth()
 
   const handleLogin = async (credentials: { email: string; password: string; userType: 'admin' | 'employee' }) => {
     if (credentials.userType !== 'admin') {
@@ -38,6 +40,7 @@ function Page() {
       // Optionally store user data (like a token) in localStorage or cookies
       localStorage.setItem('adminData', JSON.stringify(data))
 
+      setEmail(credentials.email)
       setLoginStatus(true)
 
       // Redirect to the secure admin route
