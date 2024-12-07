@@ -39,26 +39,25 @@ export function EmployeeTable() {
   }
 
   const handleDelete = async (id: string) => {
-    try {
-      const response = await fetch(`http://localhost:5000/api/employees/${id}`, {
-        method: 'DELETE',
-      })
-
-      if (response.ok) {
-        setEmployees((prevEmployees) => prevEmployees.filter((employee) => employee._id !== id))
-      } else {
-        console.error('Failed to delete employee')
+    if (window.confirm('Are you sure you want to delete this employee?')) {
+      try {
+        const response = await fetch(`http://localhost:5000/api/employees/${id}`, {
+          method: 'DELETE',
+        })
+        if (response.ok) {
+          setEmployees((prevEmployees) => prevEmployees.filter((employee) => employee._id !== id))
+        } else {
+          console.error('Failed to delete employee')
+        }
+      } catch (error) {
+        console.error('Error deleting employee:', error)
       }
-    } catch (error) {
-      console.error('Error deleting employee:', error)
     }
   }
 
   const handleSaveChanges = async () => {
     if (editingIndex === null) return
-
     const updatedEmployee = employees[editingIndex]
-
     try {
       const response = await fetch(`http://localhost:5000/api/employees/${updatedEmployee._id}`, {
         method: 'PUT',
@@ -67,7 +66,6 @@ export function EmployeeTable() {
         },
         body: JSON.stringify(updatedEmployee),
       })
-
       if (response.ok) {
         setEditingIndex(null)
         console.log('Employee updated successfully')
@@ -81,19 +79,14 @@ export function EmployeeTable() {
 
   const handleAddEmployee = async (newEmployee: Employee) => {
     try {
-      // Extract individual key-value pairs, excluding _id
       const { name, role, email, accessStatus } = newEmployee
-
-      // Construct the JSON object without _id and add default password
       const employeePayload = {
         name,
         role,
         email,
         accessStatus,
-        password: 'test@123', // Default password added here
+        password: 'test@123',
       }
-
-      // Send to backend
       const response = await fetch('http://localhost:5000/api/employees', {
         method: 'POST',
         headers: {
@@ -101,7 +94,6 @@ export function EmployeeTable() {
         },
         body: JSON.stringify(employeePayload),
       })
-
       if (response.ok) {
         const createdEmployee = await response.json()
         setEmployees((prevEmployees) => [...prevEmployees, createdEmployee])
@@ -199,14 +191,14 @@ export function EmployeeTable() {
                     {editingIndex === index ? (
                       <Button onClick={() => handleSaveChanges()}>Save</Button>
                     ) : (
-                      <>
+                      <div className="space-x-[20px]">
                         <Button variant="secondary" onClick={() => setEditingIndex(index)}>
                           Edit
                         </Button>
                         <Button variant="destructive" onClick={() => handleDelete(employee._id)} className="ml-2">
                           Delete
                         </Button>
-                      </>
+                      </div>
                     )}
                   </TableCell>
                 </TableRow>

@@ -31,8 +31,10 @@ export default function RootLayout({
       <AuthProvider>
         <EmployeeAuthProvider>
           <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-            <Navbar />
-            <div>{children}</div>
+            <div className="relative">
+              <Navbar />
+              <div className="absolute inset-0 top-16 z-0">{children}</div>
+            </div>
           </body>
         </EmployeeAuthProvider>
       </AuthProvider>

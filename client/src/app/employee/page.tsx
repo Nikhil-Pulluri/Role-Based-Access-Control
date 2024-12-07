@@ -34,14 +34,10 @@ function Page() {
       const data = await response.json()
       console.log('Employee logged in successfully:', data)
 
-      // Store employee data (like token) if needed
       localStorage.setItem('employeeData', JSON.stringify(data))
 
       setEmail(credentials.email)
       router.push('employee/secure_route')
-
-      // Redirect to the secure employee route (e.g., dashboard)
-      // router.push('/employee/dashboard'); // If using Next.js router
     } catch (error) {
       console.error('Error during login:', error)
       setError('An error occurred. Please try again later.')

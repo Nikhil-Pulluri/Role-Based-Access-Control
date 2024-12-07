@@ -4,8 +4,8 @@ import { Skeleton } from '@/components/ui/skeleton'
 
 export default function Home() {
   return (
-    <main className="min-h-screen p-8">
-      <div className="mx-auto max-w-7xl">
+    <main className="min-h-screen w-full p-8">
+      <div className="mx-auto max-w-2xl">
         <h1 className="mb-8 text-3xl font-bold">Employee Dashboard</h1>
         <Suspense fallback={<EmployeeSkeleton />}>
           <EmployeeDetails />

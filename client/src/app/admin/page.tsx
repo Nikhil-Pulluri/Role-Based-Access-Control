@@ -30,24 +30,22 @@ function Page() {
 
       if (!response.ok) {
         const errorData = await response.json()
-        alert(`Login failed: ${errorData.error}`) // Display error to the user
+        alert(`Login failed: ${errorData.error}`)
         return
       }
 
       const data = await response.json()
       console.log('Admin logged in successfully:', data)
 
-      // Optionally store user data (like a token) in localStorage or cookies
       localStorage.setItem('adminData', JSON.stringify(data))
 
       setEmail(credentials.email)
       setLoginStatus(true)
 
-      // Redirect to the secure admin route
       router.push('/admin/secure_route')
     } catch (error) {
       console.error('Error during login:', error)
-      alert('An error occurred. Please try again later.') // Notify user of general error
+      alert('An error occurred. Please try again later.')
     }
   }
 
