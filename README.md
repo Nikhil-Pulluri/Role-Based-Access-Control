@@ -1,6 +1,6 @@
 # Employee Management System - Role Based Access System
 
-This project is a backend application for managing employees, featuring CRUD operations, login authentication for employees and admin, and secure password management. Built using modern technologies, it connects to a MongoDB database and exposes RESTful APIs.
+This project is a fullstack application for managing employees, featuring CRUD operations, login authentication for employees and admin, and secure password management. Built using modern technologies, it connects to a MongoDB database and exposes RESTful APIs.
 
 ---
 
@@ -49,9 +49,8 @@ This project is a backend application for managing employees, featuring CRUD ope
    npm run dev
    ```
 
-3. Get back to the root folder
+3. Open a new terminal in the root directory and change the directory to the server to start the backend server
    ```bash
-   cd ..
    cd server
    npm i
    npm start
