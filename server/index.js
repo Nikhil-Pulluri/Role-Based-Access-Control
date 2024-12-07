@@ -61,6 +61,32 @@ app.get('/api/employees', async (req, res) => {
   }
 });
 
+// admin login auth
+
+app.post('/api/admin/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
+    }
+
+    const admin = await Employee.findOne({ email, role: 'Admin' }); // Ensure the admin role
+    if (!admin) {
+      return res.status(404).json({ error: 'Admin not found' });
+    }
+
+    if (admin.password !== password) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    res.status(200).json({ message: 'Login successful', admin });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
 // Update an employee
 app.put('/api/employees/:id', async (req, res) => {
   try {
