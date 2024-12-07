@@ -81,12 +81,25 @@ export function EmployeeTable() {
 
   const handleAddEmployee = async (newEmployee: Employee) => {
     try {
+      // Extract individual key-value pairs, excluding _id
+      const { name, role, email, accessStatus } = newEmployee
+
+      // Construct the JSON object without _id and add default password
+      const employeePayload = {
+        name,
+        role,
+        email,
+        accessStatus,
+        password: 'test@123', // Default password added here
+      }
+
+      // Send to backend
       const response = await fetch('http://localhost:5000/api/employees', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(newEmployee),
+        body: JSON.stringify(employeePayload),
       })
 
       if (response.ok) {
