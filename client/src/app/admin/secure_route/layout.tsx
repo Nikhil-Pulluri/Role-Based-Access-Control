@@ -98,12 +98,12 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import Link from 'next/link'
+
 import { useRouter } from 'next/navigation'
 import { useAdminAuth } from '@/context/admin_login'
 import { ChangePasswordDialog } from './adminthings/changePassword'
 import { useEmailAuth } from '@/context/auth_context'
-import { Users, LogOut, ChevronRight, Building } from 'lucide-react'
+import { LogOut, Building } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
@@ -113,11 +113,18 @@ interface LayoutProps {
   children: React.ReactNode
 }
 
+interface Employee {
+  _id: string
+  name: string
+  role: string
+  email: string
+  accessStatus: 'Granted' | 'Denied'
+}
 const SidebarLayout: React.FC<LayoutProps> = ({ children }) => {
   const router = useRouter()
   const { isLoggedIn, setLoginStatus } = useAdminAuth()
   const { email } = useEmailAuth()
-  const [employeeDetails, setEmployeeDetails] = useState<any>(null)
+  const [employeeDetails, setEmployeeDetails] = useState<Employee | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
 
   const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL

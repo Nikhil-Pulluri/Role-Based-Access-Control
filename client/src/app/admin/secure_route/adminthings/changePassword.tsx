@@ -46,6 +46,7 @@ export function ChangePasswordDialog({ employeeId }: ChangePasswordProps) {
         setError(data.error || 'Failed to update password')
       }
     } catch (err) {
+      console.error('Error updating password:', err)
       setError('An error occurred while updating the password')
     } finally {
       setLoading(false)

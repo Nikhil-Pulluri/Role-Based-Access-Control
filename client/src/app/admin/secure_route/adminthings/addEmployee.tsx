@@ -47,7 +47,7 @@ export function AddEmployeeDialog({ onAddEmployee }: AddEmployeeDialogProps) {
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Add New Employee</DialogTitle>
-          <DialogDescription>Fill in the details to add a new employee. Click save when you're done.</DialogDescription>
+          <DialogDescription>Fill in the details to add a new employee. Click save when you&apos;re done.</DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">

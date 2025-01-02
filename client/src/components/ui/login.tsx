@@ -13,7 +13,7 @@ interface LoginProps {
 const Login: React.FC<LoginProps> = ({ onLogin, usertype }) => {
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
-  const [userType, setUserType] = useState<'admin' | 'employee'>(usertype)
+  const [userType] = useState<'admin' | 'employee'>(usertype)
 
   const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)
   const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)

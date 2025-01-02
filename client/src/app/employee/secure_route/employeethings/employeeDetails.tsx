@@ -6,7 +6,7 @@ import { ChangePasswordDialog } from '@/app/admin/secure_route/adminthings/chang
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { Building2, Mail, Shield, UserCircle } from 'lucide-react'
+import { Building2, Mail, Shield } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 interface Employee {
