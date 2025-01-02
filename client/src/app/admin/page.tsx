@@ -9,6 +9,8 @@ import { useEmailAuth } from '@/context/auth_context'
 function Page() {
   const router = useRouter()
 
+  const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL
+
   const { setLoginStatus } = useAdminAuth()
   const { setEmail } = useEmailAuth()
 
@@ -19,7 +21,7 @@ function Page() {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/admin/login', {
+      const response = await fetch(`${backendURL}/api/admin/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

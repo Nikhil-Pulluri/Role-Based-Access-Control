@@ -120,6 +120,8 @@ const SidebarLayout: React.FC<LayoutProps> = ({ children }) => {
   const [employeeDetails, setEmployeeDetails] = useState<any>(null)
   const [loading, setLoading] = useState<boolean>(true)
 
+  const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL
+
   useEffect(() => {
     if (!isLoggedIn) {
       router.push('/admin')
@@ -130,7 +132,7 @@ const SidebarLayout: React.FC<LayoutProps> = ({ children }) => {
     const fetchEmployeeDetails = async () => {
       if (email) {
         try {
-          const response = await fetch(`http://localhost:5000/api/employees/email/${email}`)
+          const response = await fetch(`${backendURL}/api/employees/email/${email}`)
           if (!response.ok) {
             throw new Error('Failed to fetch employee details')
           }

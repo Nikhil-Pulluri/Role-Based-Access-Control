@@ -24,6 +24,8 @@ export function EmployeeDetails() {
   const [error, setError] = useState('')
   const router = useRouter()
 
+  const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL
+
   useEffect(() => {
     if (!email) {
       setError('No email provided')
@@ -31,7 +33,7 @@ export function EmployeeDetails() {
       return
     }
 
-    fetch(`http://localhost:5000/api/employees/email/${email}`)
+    fetch(`${backendURL}/api/employees/email/${email}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error('Failed to fetch employee details')

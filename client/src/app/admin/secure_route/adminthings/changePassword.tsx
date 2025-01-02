@@ -14,6 +14,8 @@ export function ChangePasswordDialog({ employeeId }: ChangePasswordProps) {
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string>('')
 
+  const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL
+
   const handleSave = async () => {
     if (!oldPassword || !newPassword) {
       alert('Both old password and new password are required.')
@@ -25,7 +27,7 @@ export function ChangePasswordDialog({ employeeId }: ChangePasswordProps) {
 
     try {
       // Send the request to change the password
-      const response = await fetch(`http://localhost:5000/api/employees/${employeeId}/change-password`, {
+      const response = await fetch(`${backendURL}/api/employees/${employeeId}/change-password`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

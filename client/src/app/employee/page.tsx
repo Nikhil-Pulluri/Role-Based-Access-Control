@@ -9,6 +9,8 @@ function Page() {
   const { setEmail } = useEmployeeAuth()
   const router = useRouter()
 
+  const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL
+
   const handleLogin = async (credentials: { email: string; password: string; userType: 'admin' | 'employee' }) => {
     if (credentials.userType !== 'employee') {
       console.error('Only employee login is allowed.')
@@ -16,7 +18,7 @@ function Page() {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/employees/login', {
+      const response = await fetch(`${backendURL}/api/employees/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -19,6 +19,8 @@ export function EmployeeTable() {
   const [employees, setEmployees] = useState<Employee[]>([])
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
 
+  const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL
+
   const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value)
   }
@@ -41,7 +43,7 @@ export function EmployeeTable() {
   const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this employee?')) {
       try {
-        const response = await fetch(`http://localhost:5000/api/employees/${id}`, {
+        const response = await fetch(`${backendURL}/api/employees/${id}`, {
           method: 'DELETE',
         })
         if (response.ok) {
@@ -59,7 +61,7 @@ export function EmployeeTable() {
     if (editingIndex === null) return
     const updatedEmployee = employees[editingIndex]
     try {
-      const response = await fetch(`http://localhost:5000/api/employees/${updatedEmployee._id}`, {
+      const response = await fetch(`${backendURL}/api/employees/${updatedEmployee._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -87,7 +89,7 @@ export function EmployeeTable() {
         accessStatus,
         password: 'test@123',
       }
-      const response = await fetch('http://localhost:5000/api/employees', {
+      const response = await fetch(`${backendURL}/api/employees`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -108,7 +110,7 @@ export function EmployeeTable() {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/employees')
+        const response = await fetch(`${backendURL}/api/employees`)
         if (response.ok) {
           const data = await response.json()
           setEmployees(data)
